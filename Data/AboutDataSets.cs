@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Design.Serialization;
 using System.Data;
 using System.Data.SQLite;
 using System.Globalization;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Security;
 using Xunit;
 
@@ -112,7 +115,43 @@ VALUES ('Paul', 32, 'California', 20000.00 )
         }
 
         [Fact]
+        public void CanGetSchema()
+        {
+            using (SQLiteConnection connection = CreateDatase())
+            {
+                var schema = connection.GetSchema("DataSourceInformation");
+                var information = new Dictionary<string, object>();
+                for (int i = 0; i < schema.Columns.Count; i++)
+                {
+                    information.Add(schema.Columns[i].ColumnName, schema.Rows[0][i]);
+                }
+                Assert.NotEmpty(information);
+            }
+        }
+
+        [Fact]
         public void CanStoreCustomTypes()
+        {
+            var dataSet = new DataSet { RemotingFormat = SerializationFormat.Binary };
+            var table = dataSet.Tables.Add("Test");
+            var column = table.Columns.Add("custom");
+            column.DataType = typeof(object);
+
+            var row = table.NewRow();
+            row["custom"] = new Custom("test");
+            table.Rows.Add(row);
+
+            var formatter = new BinaryFormatter();
+            var store = new MemoryStream();
+            formatter.Serialize(store, dataSet);
+
+            store.Seek(0, SeekOrigin.Begin); // rewind
+            var stored = (DataSet)formatter.Deserialize(store);
+            Assert.IsType<Custom>(stored.Tables[0].Rows[0][0]);
+        }
+
+        [Fact]
+        public void CannotQueryCustomTypesWithoutConvert()
         {
             var dataSet = new DataSet();
             var table = dataSet.Tables.Add("Test");
@@ -123,7 +162,22 @@ VALUES ('Paul', 32, 'California', 20000.00 )
             row["custom"] = new Custom("test");
             table.Rows.Add(row);
 
-            var result = table.Select("[custom]='test'");
+            Assert.Throws<EvaluateException>(() => _ = table.Select("[custom]='test'"));
+        }
+
+        [Fact]
+        public void CanQueryCustomTypesWithConvert()
+        {
+            var dataSet = new DataSet();
+            var table = dataSet.Tables.Add("Test");
+            var column = table.Columns.Add("custom");
+            column.DataType = typeof(object);
+
+            var row = table.NewRow();
+            row["custom"] = new Custom("test");
+            table.Rows.Add(row);
+
+            var result = table.Select("CONVERT([custom], 'System.String')='test'");
             Assert.NotEmpty(result);
         }
     }
