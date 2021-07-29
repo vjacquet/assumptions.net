@@ -1,5 +1,10 @@
-﻿using System.Data;
+﻿using System;
+using System.ComponentModel;
+using System.ComponentModel.Design.Serialization;
+using System.Data;
 using System.Data.SQLite;
+using System.Globalization;
+using System.Security;
 using Xunit;
 
 namespace NetCore.Assumptions.Data
@@ -104,6 +109,96 @@ VALUES ('Paul', 32, 'California', 20000.00 )
 
                 Assert.Equal(3, affected);
             }
+        }
+
+        [Fact]
+        public void CanStoreCustomTypes()
+        {
+            var dataSet = new DataSet();
+            var table = dataSet.Tables.Add("Test");
+            var column = table.Columns.Add("custom");
+            column.DataType = typeof(object);
+
+            var row = table.NewRow();
+            row["custom"] = new Custom("test");
+            table.Rows.Add(row);
+
+            var result = table.Select("[custom]='test'");
+            Assert.NotEmpty(result);
+        }
+    }
+
+    [Serializable]
+    [TypeConverter(typeof(CustomConverter))]
+    public class Custom
+    {
+        #region CustomConverter
+
+        private class CustomConverter : TypeConverter
+        {
+            public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
+            {
+                return sourceType == typeof(string);
+            }
+
+            public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
+            {
+                return destinationType == typeof(InstanceDescriptor) || destinationType == typeof(string) || base.CanConvertTo(context, destinationType);
+            }
+
+            public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
+            {
+                if (value == null) throw GetConvertFromException(value);
+
+                string s = value as string;
+                if (s == null) throw new ArgumentException(nameof(value));
+
+                return new Custom(s);
+            }
+
+            [SecurityCritical]
+            public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
+            {
+                if (destinationType != null && value is Custom)
+                {
+                    var id = (Custom)value;
+                    var s = id.ToString();
+                    if (destinationType == typeof(InstanceDescriptor))
+                    {
+                        var ctor = typeof(Custom).GetConstructor(new Type[] { typeof(string) });
+                        return new InstanceDescriptor(ctor, new object[] { s });
+                    }
+                    if (destinationType == typeof(string))
+                    {
+                        return s;
+                    }
+                }
+                return base.ConvertTo(context, culture, value, destinationType);
+            }
+
+            public override bool GetStandardValuesSupported(ITypeDescriptorContext context)
+            {
+                return false;
+            }
+
+            public override bool GetStandardValuesExclusive(ITypeDescriptorContext context)
+            {
+                return false;
+            }
+        }
+
+        #endregion
+
+        private readonly string _value;
+
+        public Custom(string value)
+        {
+            _value = value;
+        }
+
+        public override string ToString()
+        {
+            return _value;
         }
     }
 }
