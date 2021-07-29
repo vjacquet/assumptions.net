@@ -29,7 +29,7 @@ namespace NetCore.Assumptions
         }
 
         [Fact]
-        public void StrignRepresentationOfTwoExpressionsBuildTheSameWayAreEqual()
+        public void StringRepresentationOfTwoExpressionsBuildTheSameWayAreEqual()
         {
             Expression<Func<int, bool>> divisibleBy3 = x => (x % 3) == 0;
             Expression<Func<int, bool>> divisibleBy5 = x => (x % 5) == 0;
