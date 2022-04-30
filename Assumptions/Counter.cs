@@ -1,6 +1,6 @@
 ﻿namespace NetCore.Assumptions
 {
-    class Counter
+    internal class Counter
     {
         private int _count;
 
