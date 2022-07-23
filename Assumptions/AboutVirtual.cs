@@ -12,7 +12,6 @@ namespace NetCore.Assumptions
             Assert.Equal("Derived.Foo(object)", actual);
         }
 
-
         #region Suite
 
         class Base
