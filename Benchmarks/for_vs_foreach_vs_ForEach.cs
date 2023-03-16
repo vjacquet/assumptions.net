@@ -9,7 +9,7 @@ namespace Benchmarks
 	[RPlotExporter]
 	public class for_vs_foreach_vs_ForEach
 	{
-		private List<int>? _items;
+		private List<int> _items = new();
 
 		[GlobalSetup]
 		public void Setup()
