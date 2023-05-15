@@ -132,6 +132,8 @@ VALUES ('Paul', 32, 'California', 20000.00 )
         [Fact]
         public void CanStoreCustomTypes()
         {
+#pragma warning disable SYSLIB0011 // Type or member is obsolete
+
             var dataSet = new DataSet { RemotingFormat = SerializationFormat.Binary };
             var table = dataSet.Tables.Add("Test");
             var column = table.Columns.Add("custom");
@@ -148,6 +150,8 @@ VALUES ('Paul', 32, 'California', 20000.00 )
             store.Seek(0, SeekOrigin.Begin); // rewind
             var stored = (DataSet)formatter.Deserialize(store);
             Assert.IsType<Custom>(stored.Tables[0].Rows[0][0]);
+
+#pragma warning restore SYSLIB0011 // Type or member is obsolete
         }
 
         [Fact]
