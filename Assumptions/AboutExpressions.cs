@@ -7,7 +7,7 @@ namespace NetCore.Assumptions
     public class AboutExpressions
     {
         [Fact]
-        public void CompilingTwiceGeneratesDifferentDelegates()
+        public void Compiling_twice_generates_different_delegates()
         {
             Expression<Func<int, bool>> fn = x => x > 10;
 
@@ -17,7 +17,7 @@ namespace NetCore.Assumptions
         }
 
         [Fact]
-        public void TwoExpressionsBuildTheSameWayAreNotEqual()
+        public void Two_expressions_build_the_same_way_are_not_equal()
         {
             Expression<Func<int, bool>> divisibleBy3 = x => (x % 3) == 0;
             Expression<Func<int, bool>> divisibleBy5 = x => (x % 5) == 0;
@@ -29,7 +29,7 @@ namespace NetCore.Assumptions
         }
 
         [Fact]
-        public void StringRepresentationOfTwoExpressionsBuildTheSameWayAreEqual()
+        public void String_representation_of_two_expressions_build_the_same_way_are_equal()
         {
             Expression<Func<int, bool>> divisibleBy3 = x => (x % 3) == 0;
             Expression<Func<int, bool>> divisibleBy5 = x => (x % 5) == 0;
@@ -40,7 +40,7 @@ namespace NetCore.Assumptions
             Assert.Equal(expr1.ToString(), expr2.ToString());
         }
 
-        static Expression<Func<T, bool>> MakeAnd<T>(Expression<Func<T, bool>> x, Expression<Func<T, bool>> y)
+        private static Expression<Func<T, bool>> MakeAnd<T>(Expression<Func<T, bool>> x, Expression<Func<T, bool>> y)
         {
             var paramExpr = Expression.Parameter(typeof(T));
             var exprBody = Expression.AndAlso(x.Body, y.Body);
@@ -52,7 +52,7 @@ namespace NetCore.Assumptions
 
         #region Visitors
 
-        class ParameterReplacer : ExpressionVisitor
+        private class ParameterReplacer : ExpressionVisitor
         {
 
             private readonly ParameterExpression _parameter;

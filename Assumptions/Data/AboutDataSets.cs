@@ -14,7 +14,7 @@ namespace NetCore.Assumptions.Data
 {
     public class AboutDataSets
     {
-        static SQLiteConnection CreateDatase()
+        private static SQLiteConnection CreateDatase()
         {
             var connection = new SQLiteConnection("DataSource=:memory:");
             connection.Open();
@@ -41,7 +41,7 @@ VALUES ('Paul', 32, 'California', 20000.00 )
         }
 
         [Fact]
-        public void CanLoad()
+        public void Can_Load()
         {
             using (SQLiteConnection connection = CreateDatase())
             {
@@ -61,7 +61,7 @@ VALUES ('Paul', 32, 'California', 20000.00 )
         }
 
         [Fact]
-        public void CanFind()
+        public void Can_Find()
         {
             using (SQLiteConnection connection = CreateDatase())
             {
@@ -83,7 +83,7 @@ VALUES ('Paul', 32, 'California', 20000.00 )
         }
 
         [Fact]
-        public void CanUpdate()
+        public void Can_Update()
         {
             using (SQLiteConnection connection = CreateDatase())
             {
@@ -115,7 +115,7 @@ VALUES ('Paul', 32, 'California', 20000.00 )
         }
 
         [Fact]
-        public void CanGetSchema()
+        public void Can_GetSchema()
         {
             using (SQLiteConnection connection = CreateDatase())
             {
@@ -130,7 +130,7 @@ VALUES ('Paul', 32, 'California', 20000.00 )
         }
 
         [Fact]
-        public void CanStoreCustomTypes()
+        public void Can_store_custom_types()
         {
 #pragma warning disable SYSLIB0011 // Type or member is obsolete
 
@@ -155,7 +155,7 @@ VALUES ('Paul', 32, 'California', 20000.00 )
         }
 
         [Fact]
-        public void CannotQueryCustomTypesWithoutConvert()
+        public void Cannot_query_custom_types_without_Convert()
         {
             var dataSet = new DataSet();
             var table = dataSet.Tables.Add("Test");
@@ -170,7 +170,7 @@ VALUES ('Paul', 32, 'California', 20000.00 )
         }
 
         [Fact]
-        public void CanQueryCustomTypesWithConvert()
+        public void Can_query_custom_types_with_convert()
         {
             var dataSet = new DataSet();
             var table = dataSet.Tables.Add("Test");

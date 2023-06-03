@@ -5,7 +5,7 @@ namespace NetCore.Assumptions
     public class AboutVirtual
     {
         [Fact]
-        public void AssumeOverloadHidesOverride()
+        public void Assume_overload_hides_override()
         {
             var d = new Derived();
             var actual = d.Foo(10);
@@ -14,7 +14,7 @@ namespace NetCore.Assumptions
 
         #region Suite
 
-        class Base
+        private class Base
         {
             public virtual string Foo(int x)
             {
@@ -22,7 +22,7 @@ namespace NetCore.Assumptions
             }
         }
 
-        class Derived : Base
+        private class Derived : Base
         {
             public override string Foo(int x)
             {

@@ -97,5 +97,13 @@ namespace NetCore.Assumptions
             Assert.True(a == c, "a == c");
             Assert.False(a != c, "a != c");
         }
+
+        [Fact]
+        public void NullIsNotFormatted()
+        {
+            int? i = null;
+            var actual = $"[{i}]";
+            Assert.Equal("[]", actual);
+        }
     }
 }

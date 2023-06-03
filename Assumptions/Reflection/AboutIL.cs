@@ -15,7 +15,7 @@ namespace NetCore.Assumptions.Reflection
         [Theory]
         [InlineData("IfStatement")]
         [InlineData("ConditionalExpression")]
-        public void NullCoalesceYieldSmallerILCodeThan(string method)
+        public void Null_Coalesce_Yield_Smaller_IL_Code_Than(string method)
         {
             var type = GetType();
             var baseLine = type.GetMethod("NullCoalesce").GetMethodBody();
